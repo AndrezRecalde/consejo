@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\RolesController;
 use App\Http\Controllers\StatesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VeedoresController;
@@ -26,6 +28,11 @@ Route::get('cantones', [StatesController::class, 'loadCantones']);              
 Route::post('parroquias', [StatesController::class, 'loadParroquias']);               //Devuelve todas las parroquias con request
 Route::post('recintos', [StatesController::class, 'loadRecintos']);                  //Devuelve todos los recintos con un request
 Route::get('recintos', [StatesController::class, 'loadRecintoAll']);                //Devuelve todos los recintos sin request
+
+
+//RolesController
+Route::get('roles', [RolesController::class, 'getRoles']);
+Route::get('permissions', [PermissionsController::class, 'getPermissions']);
 
 
 //UsersController

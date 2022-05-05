@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 /* Route::get('/', function () {
     return view('welcome');
 }); */
+
+//PDF
+Route::get('/users-pdf', [PDFController::class, 'getUsers']);
+Route::get('/veedores-pdf', [PDFController::class, 'getVeedores']);
