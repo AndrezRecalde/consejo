@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -50,7 +50,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
+    public function canton()
+	{
+		return $this->belongsTo(Canton::class,'canton_id','id');
+	}
+	public function parroquia()
+	{
+		return $this->belongsTo(Parroquia::class,'parroquia_id','id');
+	}
     public function veedores()
     {
         return $this->hasMany(Veedor::class);
@@ -60,7 +67,7 @@ class User extends Authenticatable
     //esta funcion me permite setear de manera automatica los atributos
     public static function create(array $attributes = [])
     {
-        $attributes['user_id'] = 1;   /** cambiar por: auth()->id() */
+        $attributes['user_id'] = \Auth::guard('api')->user()->id;   /** cambiar por: auth()->id() */
         $attributes['password'] = Hash::make('a123456');
 
         $user = static::query()->create($attributes);

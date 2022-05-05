@@ -22,10 +22,13 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-
+    public function indexview(Request $request)
+    {
+        return view('layouts.dashboard.index');
+    }
 
     /** Carga todos los usuarios */
-    public function loadAllUsers()
+    public function loadAllUsers(Request $request)
     {
         $users = User::select(DB::raw("users.id, users.dni, users.first_name, users.last_name, users.phone, users.email,
                                          c.nombre_canton, r.name"))
@@ -78,7 +81,7 @@ class UsersController extends Controller
             return response()->json(['status' => 'Save Success']);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([$request->messages()]);
+            return response()->json([$th->getMessage()]);
         }
     }
 
@@ -92,7 +95,7 @@ class UsersController extends Controller
     {
         $user = DB::select('CALL view_user(?)', array($request->id));
 
-         /** Devuelve supervisores si es Administrador, devuelve Coordinadores si tiene el role Supervisor */
+        /** Devuelve supervisores si es Administrador, devuelve Coordinadores si tiene el role Supervisor */
         $funcionarios = DB::select('CALL sp_view_funcionarios(?)', array($request->id));
 
         /* Devuelve una lista de veedores si el role del usuario es COORDINADOR */
@@ -100,7 +103,9 @@ class UsersController extends Controller
 
         if ($user) {
             foreach ($user as $u) {
-
+                $_user = User::find($u->id);
+                $u->canton_id = $_user->canton->id;
+                $u->parroquia_id = $_user->parroquia->id;
                 if ($u->roles === 'Administrador' || $u->roles === 'Supervisor') {
 
                     return response()->json([
@@ -141,10 +146,10 @@ class UsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserUpdateRequest $request, User $user)
+    public function update(UserUpdateRequest $request)
     {
 
-        //$user = User::find($request->id);
+        $user = User::find($request->id);
         try {
 
             if ($user) {

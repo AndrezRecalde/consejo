@@ -33,7 +33,7 @@ class UserUpdateRequest extends FormRequest
             'avatar'        =>  [$this->route('users') ? 'nullable' : 'required', 'mimes:png,jpg,jpeg'],
             'first_name'    =>  'required',
             'last_name'     =>  'required',
-            'phone'         =>  '',
+            'phone'         =>  'required',
             'email'         =>  'required',
 
             /* 'user_id'       =>  'required', */
