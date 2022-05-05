@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
@@ -15,7 +16,7 @@ use App\Http\Controllers\UsersController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+ 
 Route::group([
     'middleware' => 'auth'
 ], function () {
@@ -28,3 +29,8 @@ Route::group([
 });
 Route::get('/login', [AuthController::class, 'loginIndex'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
+ 
+//PDF
+Route::get('/users-pdf', [PDFController::class, 'getUsers']);
+Route::get('/veedores-pdf', [PDFController::class, 'getVeedores']);
+ 

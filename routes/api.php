@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\RolesController;
 use App\Http\Controllers\StatesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VeedoresController;
@@ -32,6 +34,7 @@ Route::group([
     });
 });
 
+ 
 Route::group([
     'middleware' => 'auth:api'
 ], function () {
@@ -53,6 +56,9 @@ Route::group([
     Route::post('/update/user', [UsersController::class, 'update']);          //Para editar al usuario
     Route::post('/delete/user', [UsersController::class, 'destroy']);               //Para eliminar al usuario
 
+    //RolesController
+    Route::get('roles', [RolesController::class, 'getRoles']);
+    Route::get('permissions', [PermissionsController::class, 'getPermissions']);
 
     //VeedoresController
     Route::get('/veedores', [VeedoresController::class, 'index']);
@@ -61,3 +67,4 @@ Route::group([
     Route::post('/show/veedor', [VeedoresController::class, 'show']);
     Route::post('/delete/veedor', [VeedoresController::class, 'destroy']);             //Para eliminar al veedor
 });
+ 
