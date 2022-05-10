@@ -26,12 +26,6 @@ Route::group([
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/signup', [AuthController::class, 'signUp']);
 
-    Route::group([
-        'middleware' => 'auth:api'
-    ], function () {
-        Route::get('logout', 'AuthController@logout');
-        Route::get('user', 'AuthController@user');
-    });
 });
 
  
@@ -40,31 +34,34 @@ Route::group([
 ], function () {
     Route::get('/logout', [AuthController::class, 'logoutapi']);
 
-    Route::get('user', 'AuthController@user');
     //StatesController
     Route::get('cantones', [StatesController::class, 'loadCantones']);                      //Devuelve todos los cantones
     Route::post('parroquias', [StatesController::class, 'loadParroquias']);               //Devuelve todas las parroquias con request
+    Route::get('parroquias', [StatesController::class, 'loadParroquiasAll']);               //Devuelve todas las parroquias con request
     Route::post('recintos', [StatesController::class, 'loadRecintos']);                  //Devuelve todos los recintos con un request
     Route::get('recintos', [StatesController::class, 'loadRecintoAll']);                //Devuelve todos los recintos sin request
 
-
-    //UsersController
-    Route::post('/users',    [UsersController::class, 'index']);                         //Cargar todos los usuarios con parametro
-    Route::get('/users-all', [UsersController::class, 'loadAllUsers']);                //Cargar todos los usuarios sin parametros
-    Route::post('/show/user', [UsersController::class, 'show']);                       //Para ver al usuario
-    Route::post('/store/user', [UsersController::class, 'store']);                    //Para guardar al usuario
-    Route::post('/update/user', [UsersController::class, 'update']);          //Para editar al usuario
-    Route::post('/delete/user', [UsersController::class, 'destroy']);               //Para eliminar al usuario
-
+    Route::group(['middleware' => ['role:Administrador|Supervisor,api']], function () {
+        //UsersController
+        Route::post('/users',    [UsersController::class, 'index']);                         //Cargar todos los usuarios con parametro
+        Route::get('/users-all', [UsersController::class, 'loadAllUsers']);                //Cargar todos los usuarios sin parametros
+        Route::post('/store/user', [UsersController::class, 'store']);                    //Para guardar al usuario
+        Route::post('/update/user/{user}', [UsersController::class, 'update']);          //Para editar al usuario
+        Route::post('/delete/user', [UsersController::class, 'destroy']);               //Para eliminar al usuario
+    });
+    Route::group(['middleware' => ['role:Administrador|Supervisor|Coordinador,api']], function () {
+        Route::post('/show/user', [UsersController::class, 'show']); 
+    });
     //RolesController
     Route::get('roles', [RolesController::class, 'getRoles']);
     Route::get('permissions', [PermissionsController::class, 'getPermissions']);
 
-    //VeedoresController
-    Route::get('/veedores', [VeedoresController::class, 'index']);
-    Route::post('/store/veedor', [VeedoresController::class, 'store']);
-    Route::post('/update/veedor/{veedor}', [VeedoresController::class, 'update']);
-    Route::post('/show/veedor', [VeedoresController::class, 'show']);
-    Route::post('/delete/veedor', [VeedoresController::class, 'destroy']);             //Para eliminar al veedor
+    Route::group(['middleware' => ['role:Coordinador,api']], function () {
+        //VeedoresController
+        Route::get('/veedors-all', [VeedoresController::class, 'index']);
+        Route::post('/store/veedor', [VeedoresController::class, 'store']);
+        Route::post('/update/veedor/{veedor}', [VeedoresController::class, 'update'])->name('veedores');
+        Route::post('/show/veedor', [VeedoresController::class, 'show']);
+        Route::post('/delete/veedor', [VeedoresController::class, 'destroy']);             //Para eliminar al veedor
+    });
 });
- 

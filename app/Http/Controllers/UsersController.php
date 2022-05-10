@@ -30,12 +30,19 @@ class UsersController extends Controller
     /** Carga todos los usuarios */
     public function loadAllUsers(Request $request)
     {
+        $user = \Auth::guard('api')->user();
         $users = User::select(DB::raw("users.id, users.dni, users.first_name, users.last_name, users.phone, users.email,
                                          c.nombre_canton, r.name"))
             ->join("cantones as c", "c.id", "users.canton_id")
             ->join("model_has_roles as mhr", "mhr.model_id", "users.id")
-            ->join("roles as r", "r.id", "mhr.role_id")
-            ->orderBy("r.id", "ASC")->paginate(5);
+            ->join("roles as r", "r.id", "mhr.role_id");
+        if ($user->hasRole('Supervisor')) {
+            $users = $users->where(function($q)use($user){
+                $q->where('users.user_id', $user->id)
+                ->orWhere('users.id', $user->id);
+            });
+        }
+        $users = $users->orderBy("r.id", "ASC")->get();
 
         return response()->json(['users' => $users]);
     }
@@ -78,7 +85,7 @@ class UsersController extends Controller
             $user = User::create($request->validated());
             $user->assignRole($request->roles);
             $user->save();
-            return response()->json(['status' => 'Save Success']);
+            return response()->json(['status' => 'success', 'message' => 'Save Success']);
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json([$th->getMessage()]);
@@ -93,6 +100,7 @@ class UsersController extends Controller
      */
     public function show(Request $request)
     {
+
         $user = DB::select('CALL view_user(?)', array($request->id));
 
         /** Devuelve supervisores si es Administrador, devuelve Coordinadores si tiene el role Supervisor */
@@ -106,6 +114,7 @@ class UsersController extends Controller
                 $_user = User::find($u->id);
                 $u->canton_id = $_user->canton->id;
                 $u->parroquia_id = $_user->parroquia->id;
+                $u->rol_id = $_user->roles[0]->id;
                 if ($u->roles === 'Administrador' || $u->roles === 'Supervisor') {
 
                     return response()->json([
@@ -122,7 +131,7 @@ class UsersController extends Controller
                 }
             }
         } else {
-            return response()->json(['status' => 'No encontrado']);
+            return response()->json(['status' => 'error', 'message' => 'No encontrado']);
         }
 
         /* */
@@ -146,12 +155,9 @@ class UsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserUpdateRequest $request)
+    public function update(UserUpdateRequest $request, User $user)
     {
-
-        $user = User::find($request->id);
         try {
-
             if ($user) {
                 if ($request->hasFile('avatar')) {
 
@@ -165,10 +171,17 @@ class UsersController extends Controller
 
                     $user->avatar = $request->file('avatar');
                     $filename = $user->avatar->getClientOriginalName();
-                    $save_path = storage_path('app/public') . '/users/dni/' . $user->dni . '/uploads/avatar/';
-                    $public_path = '/users/dni/' . $user->dni . '/uploads/avatar/' . $filename;
-                    File::makeDirectory($save_path, $mode = 0755, true, true);
-                    Image::make($user->avatar)->save($save_path . $filename);
+                    $save_path = '/users/dni/' . $user->dni . '/uploads/avatar/';
+                    $public_path = $save_path . $filename;
+                    $path = Storage::putFileAs(
+                        'public' . $save_path,
+                        $user->avatar,
+                        $filename
+                    );
+                    if (!$path) {
+                        \DB::rollback();
+                        return response()->json(array("status" => "error", 'message' => 'Hubo un error al actualizar'));
+                    }
                     $user->avatar = $public_path;
                     $res = $user->save();
                 } else {
@@ -180,15 +193,15 @@ class UsersController extends Controller
                     $user->assignRole($request->roles);
                 }
             } else {
-                return response()->json(['status' => 'Usuario no encontrado']);
+                return response()->json(['status' => 'error', 'message' => 'Usuario no encontrado']);
             }
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([$request->messages()]);
+            return response()->json(['status' => 'error', 'message' => $th->getMessage()]);
         }
 
         if ($res) {
-            return response()->json(['status' => 'Usuario actualizado']);
+            return response()->json(['status' => 'success', 'message' => 'Usuario actualizado']);
         }
     }
 
@@ -208,14 +221,14 @@ class UsersController extends Controller
                 File::deleteDirectory(storage_path('app/public') . '/users/dni/' . $user->dni);
                 $user->roles()->detach();
                 $user->delete();
-                return response()->json(['status' => 'Eliminado']);
+                return response()->json(['status' => 'success', 'message' => 'Eliminado']);
             } else {
                 $user->roles()->detach();
                 $user->delete();
-                return response()->json(['status' => 'Eliminado']);
+                return response()->json(['status' => 'success', 'message' => 'Eliminado']);
             }
         } else {
-            return response()->json(['status' => 'El usuario no ha sido encontrado']);
+            return response()->json(['status' => 'error', 'message' => 'El usuario no ha sido encontrado']);
         }
     }
 }

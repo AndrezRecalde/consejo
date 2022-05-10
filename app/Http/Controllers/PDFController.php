@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Veedor;
-use Barryvdh\DomPDF\Facade as PDF;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -12,12 +12,13 @@ class PDFController extends Controller
 {
     public function getUsers()
     {
-        $users  =   DB::table('users')
-        ->join('parroquias as p', 'users.parroquia_id', '=', 'p.id')
-        ->select('users.*', 'p.nombre_parroquia')
-        ->get();
+        $users  =   User::with(['canton','parroquia','roles'])->get();
+        // ->join('parroquias as p', 'users.parroquia_id', '=', 'p.id')
+        // ->select('users.*', 'p.nombre_parroquia')
+        // ->get();
 
         $pdf    =   PDF::loadView('pdf.users.all', ['users' => $users]);
+        // $pdf->setPaper('a4', 'landscape')->download('distrib-usuarios.pdf');
         return  $pdf->setPaper('a4', 'landscape')->stream('distrib-usuarios.pdf');
     }
 

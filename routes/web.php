@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Perfil\PerfilController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\VeedoresController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,12 +27,11 @@ Route::group([
 
     Route::get('/perfil', [PerfilController::class, 'index']);
     Route::get('/registers/users',    [UsersController::class, 'indexview']);                         //vista de usuarios
-
+    Route::get('/registers/veedores', [VeedoresController::class, 'indexview']);
+    Route::get('/veedor/detail/{veedor}', [VeedoresController::class, 'detail']);
+    //PDF
+    Route::get('/users-pdf', [PDFController::class, 'getUsers']);
+    Route::get('/veedores-pdf', [PDFController::class, 'getVeedores']);
 });
 Route::get('/login', [AuthController::class, 'loginIndex'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
- 
-//PDF
-Route::get('/users-pdf', [PDFController::class, 'getUsers']);
-Route::get('/veedores-pdf', [PDFController::class, 'getVeedores']);
- 

@@ -20,7 +20,11 @@ class StatesController extends Controller
         $parroquias = Parroquia::where('canton_id', $request->canton_id)->get(['id', 'canton_id', 'nombre_parroquia']);
         return response()->json(['status' => 'success', 'parroquias' => $parroquias]);
     }
-
+    public function loadParroquiasAll(Request $request)
+    {
+        $parroquias = Parroquia::get(['id',  'nombre_parroquia']);
+        return response()->json(['status' => 'success', 'parroquias' => $parroquias]);
+    }
     public function loadRecintos(Request $request)
     {
         $recintos = Recinto::where('parroquia_id', $request->parroquia_id)->get(['id', 'parroquia_id', 'nombre_recinto']);

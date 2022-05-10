@@ -35,10 +35,22 @@ class Veedor extends Model
 
     public static function create(array $attributes = [])
     {
-        $attributes['user_id'] = 1;   /** cambiar por: auth()->id() */
+        $attributes['user_id'] = \Auth::guard('api')->user()->id;   /** cambiar por: auth()->id() */
 
         $veedor = static::query()->create($attributes);
 
         return $veedor;
     }
+    public function parroquia()
+	{
+		return $this->belongsTo(Parroquia::class,'parroquia_id','id');
+	}
+    public function recinto()
+	{
+		return $this->belongsTo(Recinto::class,'recinto_id','id');
+	}
+    public function trabajo()
+	{
+		return $this->belongsTo(Recinto::class,'recinto__id','id');
+	}
 }

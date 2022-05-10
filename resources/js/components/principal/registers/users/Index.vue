@@ -4,9 +4,17 @@
             <div class="card-body pt-9 pb-0">
                 <v-row>
                     <h2>Users</h2>
-                    <v-col cols="12" md="2">
+                    <v-col cols="12">
                         <v-btn class="info mb-5" @click="nuevo"
                             ><v-icon left dark>add</v-icon>Nuevo</v-btn
+                        >
+                        <v-btn class="success mb-5" @click="descargar"
+                            ><v-icon left dark>cloud_download</v-icon
+                            >Exportar</v-btn
+                        >
+                        <v-btn v-if="$store.getters.getUser.roles == $store.state.user.roles.administrador" class="success mb-5" @click="descargarVeedores"
+                            ><v-icon left dark>cloud_download</v-icon
+                            >Exportar veedores</v-btn
                         >
                     </v-col>
                 </v-row>
@@ -83,6 +91,19 @@
                         </v-col>
                         <v-col cols="12" md="6" class="pt-0">
                             <v-select
+                                :rules="validations.rol_id"
+                                outlined
+                                v-model="input.rol_id"
+                                required
+                                :items="itemsRoles"
+                                item-text="name"
+                                item-value="id"
+                                label="Rol"
+                                dense
+                            ></v-select>
+                        </v-col>
+                        <v-col cols="12" md="6" class="pt-0">
+                            <v-select
                                 :rules="validations.canton_id"
                                 outlined
                                 v-model="input.canton_id"
@@ -108,19 +129,53 @@
                                 dense
                             ></v-select>
                         </v-col>
-                        <!-- <v-col cols="12" md="6" class="pt-0">
-                            <v-select
-                                :rules="validations.rol_id"
-                                outlined
-                                v-model="input.rol_id"
-                                required
-                                :items="itemsRoles"
-                                item-text="nombre_parroquia"
-                                item-value="id"
-                                label="Parroquia"
-                                dense
-                            ></v-select>
-                        </v-col> -->
+                        
+                        <v-col cols="12" v-if="modificando">
+                            <template v-for="(item, index) in files">
+                                <div :key="index">
+                                    <v-text-field
+                                        dense
+                                        outlined
+                                        label="Imagen"
+                                        readonly
+                                        required
+                                        :rules="
+                                            validations[
+                                                'adjunto_nombre' + index
+                                            ]
+                                        "
+                                        @click="
+                                            selectAdjunto('adjunto' + index)
+                                        "
+                                        v-model="item.adjunto_nombre"
+                                        prepend-inner-icon="attach_file"
+                                    ></v-text-field>
+                                    <span
+                                        class="error--text"
+                                        v-if="
+                                            item.adjunto_size >
+                                            $store.state.config
+                                                .adjunto_limite_maximo
+                                        "
+                                        >{{
+                                            item.loadingFile
+                                                ? "Cargando Archivo..."
+                                                : "El tamaño del documento debe ser menor o igual a 5Mb"
+                                        }}</span
+                                    >
+                                    <input
+                                        :id="'adjunto_file' + index"
+                                        type="file"
+                                        style="display: none"
+                                        :ref="'adjunto' + index"
+                                        accept="image/*"
+                                        @change="
+                                            guardarAdjunto($event, item, index)
+                                        "
+                                    />
+                                </div>
+                            </template>
+                        </v-col>
                     </v-row>
                 </v-form>
             </template>
@@ -158,6 +213,7 @@ export default {
         this.cargarValidaciones();
         this.cargarAll();
         this.cargarCantones();
+        this.cargarRoles();
     },
     mounted() {},
     data() {
@@ -167,6 +223,7 @@ export default {
             modificando: false,
             itemsCanton: [],
             itemsParroquia: [],
+            itemsRoles: [],
             input: {
                 dni: "",
                 first_name: "",
@@ -185,6 +242,7 @@ export default {
                 cargar: "/api/show/user",
                 eliminar: "/api/delete/user",
                 editar: "/api/update/user",
+                cargarRoles: "/api/roles",
             },
             validations: {
                 dni: [
@@ -208,10 +266,12 @@ export default {
                 parroquia_id: [
                     (v) => (v != null && v != "") || "El campo es obligatorio",
                 ],
+                rol_id: [
+                    (v) => (v != null && v != "") || "El campo es obligatorio",
+                ],
             },
             headers: [
                 { text: "Acciones", value: "action", sortable: false },
-                { text: "#", align: "left", value: "id" },
                 { text: "Dni", align: "left", value: "dni" },
                 { text: "Nombre", align: "left", value: "first_name" },
                 { text: "Apellido", align: "left", value: "last_name" },
@@ -267,8 +327,17 @@ export default {
                 .then((response) => {
                     var data = response.data;
                     console.log("data", data);
-                    this.items = data.users.data;
+                    this.items = data.users;
                     this.loadingTable = false;
+                })
+                .catch((errors) => {});
+        },
+        cargarRoles() {
+            axios
+                .get(this.urls.cargarRoles)
+                .then((response) => {
+                    var data = response.data;
+                    this.itemsRoles = data;
                 })
                 .catch((errors) => {});
         },
@@ -277,10 +346,6 @@ export default {
                 .get(this.urls.cargarCantones)
                 .then((response) => {
                     var data = response.data;
-                    console.log(
-                        "cargarCantones data",
-                        data.status == "success"
-                    );
                     if (data.status == "success") {
                         this.itemsCanton = data.cantones;
                     }
@@ -324,6 +389,11 @@ export default {
                 .then(async (response) => {
                     var data = response.data;
                     this.input = data.user;
+                    if (this.input.avatar) {
+                        this.files[0].adjunto_nombre = this.input.avatar
+                            .split("/")
+                            .pop();
+                    }
                     await this.cargarParroquias();
 
                     this.$store.commit("openDialogSimple", {
@@ -350,7 +420,7 @@ export default {
             formData.append("email", this.input.email);
             formData.append("dni", this.input.dni);
             formData.append("parroquia_id", this.input.parroquia_id);
-            formData.append("roles", 1);
+            formData.append("roles", this.input.rol_id);
 
             this.loading = true;
             axios
@@ -358,20 +428,32 @@ export default {
                 .then((response) => {
                     var data = response.data;
                     toast__.fire({
-                        icon: "success",
-                        title: data.status,
+                        icon: data.status,
+                        title: data.message,
                     });
+                    if(data.status=="success"){
+                        this.dialogClose("dialogSimple");
+                    }
                 })
                 .catch((errors) => {
-                    swal__.fire(
-                        "ERROR!",
-                        "ha ocurrido un error: " + errors,
-                        "error"
-                    );
+                    if(errors.response.data){
+                        let arr = Object.values(errors.response.data);
+                        swal__.fire(
+                            "ERROR!",
+                            "ha ocurrido un error: " + arr[0],
+                            "error"
+                        );
+                    }else{
+                        swal__.fire(
+                            "ERROR!",
+                            "ha ocurrido un error: " + errors,
+                            "error"
+                        );
+
+                    }
                 })
                 .finally(() => {
                     this.cargarAll();
-                    this.dialogClose("dialogSimple");
                     this.loading = false;
                 });
         },
@@ -381,7 +463,6 @@ export default {
             this.files.some((item) => {
                 if (item.adjunto_file != null && item.adjunto_file != "") {
                     formData.append("avatar", item.adjunto_file);
-                    formData.append("adjunto_nombre", item.adjunto_nombre);
                 }
             });
             formData.append("canton_id", this.input.canton_id);
@@ -392,8 +473,7 @@ export default {
             formData.append("email", this.input.email);
             formData.append("dni", this.input.dni);
             formData.append("parroquia_id", this.input.parroquia_id);
-            formData.append("roles", 1);
-            formData.append("id", this.input.id);
+            formData.append("roles", this.input.rol_id);
 
             this.loading = true;
             axios
@@ -401,20 +481,31 @@ export default {
                 .then((response) => {
                     var data = response.data;
                     toast__.fire({
-                        icon: "success",
-                        title: data.status,
+                        icon: data.status,
+                        title: data.message,
                     });
+                    if(data.status=="success"){
+                        this.dialogClose("dialogSimple");
+                    }
                 })
                 .catch((errors) => {
-                    swal__.fire(
-                        "ERROR!",
-                        "ha ocurrido un error: " + errors,
-                        "error"
-                    );
+                    if(errors.response.data){
+                        let arr = Object.values(errors.response.data);
+                        swal__.fire(
+                            "ERROR!",
+                            "ha ocurrido un error: " + arr[0],
+                            "error"
+                        );
+                    }else{
+                        swal__.fire(
+                            "ERROR!",
+                            "ha ocurrido un error: " + errors,
+                            "error"
+                        );
+                    }
                 })
                 .finally(() => {
                     this.cargarAll();
-                    this.dialogClose("dialogSimple");
                     this.loading = false;
                 });
         },
@@ -441,8 +532,8 @@ export default {
                                 var data = response.data;
 
                                 toast__.fire({
-                                    icon: "success",
-                                    title: data.status,
+                                    icon: data.status,
+                                    title: data.message,
                                 });
                             })
                             .catch((errors) => {
@@ -457,6 +548,12 @@ export default {
                             });
                     }
                 });
+        },
+        descargar(){
+            window.open('/users-pdf','_blank');
+        },
+        descargarVeedores(){
+            window.open('/veedores-pdf','_blank');
         },
         selectAdjunto(adjunto) {
             this.$refs[adjunto][0].click();

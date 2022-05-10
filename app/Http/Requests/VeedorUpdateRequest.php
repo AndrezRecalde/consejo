@@ -6,6 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class VeedorUpdateRequest extends FormRequest
 {
@@ -36,8 +37,8 @@ class VeedorUpdateRequest extends FormRequest
             'parroquia_id'  =>  'required',   //Parroquia donde trabaja
             'recinto_id'    =>  'required',  //Recinto de donde es originario
             'recinto__id'   =>  'required',  //Recinto en donde trabaja
-            'imagen_frontal'    =>  [$this->route('veedores') ? 'nullable' : 'required', 'mimes:png,jpg,jpeg'],
-            'imagen_reverso'    =>  [$this->route('veedores') ? 'nullable' : 'required', 'mimes:png,jpg,jpeg']
+            // 'imagen_frontal'    =>  [Rule::requiredIf(), 'mimes:png,jpg,jpeg'],
+            // 'imagen_reverso'    =>  [$this->route('veedores') ? 'nullable' : 'required', 'mimes:png,jpg,jpeg']
         ];
 
         return $rules;
