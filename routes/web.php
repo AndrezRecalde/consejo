@@ -18,7 +18,7 @@ use App\Http\Controllers\VeedoresController;
 | contains the "web" middleware group. Now create something great!
 |
 */
- 
+
 Route::group([
     'middleware' => 'auth'
 ], function () {
@@ -32,6 +32,15 @@ Route::group([
     //PDF
     Route::get('/users-pdf', [PDFController::class, 'getUsers']);
     Route::get('/veedores-pdf', [PDFController::class, 'getVeedores']);
+
+    Route::get('/veedores-supervisores', [PDFController::class, 'getSupervisores']);
+    Route::get('/veedores-coordinadores', [PDFController::class, 'getCoordinadores']);
+
+    Route::get('/veedores-coordinadores/{user}', [PDFController::class, 'getVeedoresWithCoord']);
+
+    Route::get('/veedores-parroquias/{user}', [PDFController::class, 'getVeedoresWithParroquia']);
+
+
 });
 Route::get('/login', [AuthController::class, 'loginIndex'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
