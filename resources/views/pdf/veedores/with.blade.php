@@ -17,8 +17,8 @@
                 <th>Dni</th>
                 <th>Apellidos y Nombres Completos</th>
                 <th>Cantón</th>
-                <th>Lugar de Votación</th>
-                <th>Recinto Electoral</th>
+                <th>Lugar de Origen</th>
+                <th>Recinto de Trabajo</th>
                 <th>Celular</th>
                 <th>Correo</th>
             </tr>
