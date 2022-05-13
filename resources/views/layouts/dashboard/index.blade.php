@@ -11,8 +11,8 @@
 					<!--begin::Brand-->
 					<div class="aside-logo flex-column-auto" id="kt_aside_logo">
 						<!--begin::Logo-->
-						<a href="../../demo1/dist/index.html">
-							<img alt="Logo" src="/assets/media/logos/logo-1-dark.svg" class="h-25px logo" />
+						<a href="#">
+							<img alt="Logo" src="/assets/media/logos/logo.png" class="h-40px logo" />
 						</a>
 						<!--end::Logo-->
 						<!--begin::Aside toggler-->
@@ -95,8 +95,8 @@
 										</div>
 									</div>
 								</div>
-                               
-							
+
+
 							</div>
 							<!--end::Menu-->
 						</div>
@@ -104,7 +104,7 @@
 					</div>
 					<!--end::Aside menu-->
 					<!--begin::Footer-->
-					
+
 					<!--end::Footer-->
 				</div>
 				<!--end::Aside-->
@@ -136,11 +136,12 @@
 							</div>
 							<!--end::Mobile logo-->
 							<!--begin::Wrapper-->
+
 							<div class="d-flex align-items-stretch justify-content-between flex-lg-grow-1">
 								<!--begin::Navbar-->
 								<div class="d-flex align-items-stretch" id="kt_header_nav">
 									<!--begin::Menu wrapper-->
-									 
+
 									<!--end::Menu wrapper-->
 								</div>
 								<!--end::Navbar-->
@@ -151,22 +152,24 @@
 									<!--begin::Activities-->
 									<!--end::Activities-->
 									<!--begin::Notifications-->
-								 
+
 									<!--end::Notifications-->
 									<!--begin::Chat-->
-								 
+
 									<!--end::Chat-->
 									<!--begin::Quick links-->
-								 
+
 									<!--end::Quick links-->
 									<!--begin::Theme mode-->
-								 
+
 									<!--end::Theme mode-->
 									<!--begin::User menu-->
+
 									<div class="d-flex align-items-center ms-1 ms-lg-3" id="kt_header_user_menu_toggle">
+                                    <div class="fw-bolder d-flex align-items-center fs-5 mr-2 text-gray-400 text-hover-primary" v-html="$store.getters.getUser.first_name"></div>
+
 										<!--begin::Menu wrapper-->
 										<div class="cursor-pointer symbol symbol-30px symbol-md-40px" data-kt-menu-trigger="click" data-kt-menu-attach="parent" data-kt-menu-placement="bottom-end">
-										
 										<v-img style="width:33px;border-radius:5px" v-if="$store.getters.getUser.avatar" :src="'/storage'+$store.getters.getUser.avatar" alt="user"></v-img>
 										<v-img style="width:33px;border-radius:5px" v-else src="/images/default.png" alt="user"></v-img>
 										</div>
@@ -208,7 +211,7 @@
 											<!--begin::Menu item-->
 											<!--end::Menu item-->
 											<!--begin::Menu item-->
-										
+
 											<!--end::Menu item-->
 											<!--begin::Menu item-->
 											<div class="menu-item px-5">
@@ -218,7 +221,7 @@
 											<!--begin::Menu separator-->
 											<!--end::Menu separator-->
 											<!--begin::Menu item-->
-											
+
 											<!--end::Menu item-->
 										</div>
 										<!--end::User account menu-->
@@ -250,7 +253,7 @@
 					<!--begin::Content-->
 					<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
 						<!--begin::Toolbar-->
-						 
+
 						<!--end::Toolbar-->
 						<!--begin::Post BODY-->
                         <div style="margin:0 30px 0 15px">
@@ -266,20 +269,18 @@
 							<!--begin::Copyright-->
 							<div class="text-dark order-2 order-md-1">
 								<span class="text-muted fw-bold me-1">2022©</span>
-								<a href="https://keenthemes.com" target="_blank" class="text-gray-800 text-hover-primary">Keenthemes</a>
+								<a href="https://es.wikipedia.org/wiki/Partido_Social_Cristiano_(Ecuador)" target="_blank" class="text-gray-800 text-hover-primary">Partido Social Cristiano</a>
 							</div>
 							<!--end::Copyright-->
 							<!--begin::Menu-->
 							<ul class="menu menu-gray-600 menu-hover-primary fw-bold order-1">
 								<li class="menu-item">
-									<a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a>
+									<a href="https://twitter.com/La6Ecuador?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" target="_blank" class="menu-link px-2">Acerca</a>
 								</li>
-								<li class="menu-item">
+								{{-- <li class="menu-item">
 									<a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a>
-								</li>
-								<li class="menu-item">
-									<a href="https://1.envato.market/EA4JP" target="_blank" class="menu-link px-2">Purchase</a>
-								</li>
+								</li> --}}
+
 							</ul>
 							<!--end::Menu-->
 						</div>
@@ -294,36 +295,36 @@
 		<!--end::Root-->
 		<!--begin::Drawers-->
 		<!--begin::Activities drawer-->
-		 
+
 		<!--end::Chat drawer-->
 		<!--end::Drawers-->
 		<!--end::Main-->
 		<!--begin::Engage drawers-->
 		<!--begin::Demos drawer-->
-	 
+
 		<!--end::Demos drawer-->
 		<!--begin::Help drawer-->
-		 
+
 		<!--end::Help drawer-->
 		<!--end::Engage drawers-->
 		<!--begin::Engage toolbar-->
-		 
+
 		<!--end::Engage toolbar-->
 		<!--begin::Scrolltop-->
-		 
+
 		<!--end::Scrolltop-->
 		<!--begin::Modals-->
 		<!--begin::Modal - Upgrade plan-->
-		 
+
 		<!--end::Modal - Upgrade plan-->
 		<!--begin::Modal - Create App-->
-		 
+
 		<!--end::Modal - Create App-->
 		<!--begin::Modal - Invite Friends-->
-		 
+
 		<!--end::Modal - Invite Friend-->
 		<!--begin::Modal - Users Search-->
-		 
+
 		<!--end::Modal - Users Search-->
 		<!--end::Modals-->
 		<!--begin::Javascript-->

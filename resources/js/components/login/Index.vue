@@ -5,7 +5,7 @@
             <div
                 class="d-flex flex-column flex-column-fluid bgi-position-y-bottom position-x-center bgi-no-repeat bgi-size-contain bgi-attachment-fixed"
                 style="
-                    background-image: url(assets/media/illustrations/sketchy-1/14.png;;;;
+                    background-image: url(assets/media/illustrations/sketchy-1/23.jpg;;;;
                 "
             >
                 <!--begin::Content-->
@@ -13,13 +13,13 @@
                     class="d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20"
                 >
                     <!--begin::Logo-->
-                    <a href="../../demo1/dist/index.html" class="mb-12">
+                    <!--<a href="../../demo1/dist/index.html" class="mb-12">
                         <img
                             alt="Logo"
                             src="assets/media/logos/logo-1.svg"
                             class="h-40px"
                         />
-                    </a>
+                    </a>-->
                     <!--end::Logo-->
                     <!--begin::Wrapper-->
                     <div
@@ -39,18 +39,18 @@
                             <div class="text-center mb-10">
                                 <!--begin::Title-->
                                 <h1 class="text-dark mb-3">
-                                    Sign In to Metronic
+                                    Acceder
                                 </h1>
                                 <!--end::Title-->
                                 <!--begin::Link-->
-                                <div class="text-gray-400 fw-bold fs-4">
+                                <!-- <div class="text-gray-400 fw-bold fs-4">
                                     New Here?
                                     <a
                                         href="../../demo1/dist/authentication/layouts/basic/sign-up.html"
                                         class="link-primary fw-bolder"
                                         >Create an Account</a
                                     >
-                                </div>
+                                </div> -->
                                 <!--end::Link-->
                             </div>
                             <!--begin::Heading-->

@@ -42,7 +42,7 @@
                                     <a
                                         href="#"
                                         class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1"
-                                        >{{ user.first_name }}</a
+                                        >{{ user.first_name + " " + user.last_name }}</a
                                     >
                                     <a href="#">
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen026.svg-->

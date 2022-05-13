@@ -28,7 +28,6 @@
               >{{subtitle}}</v-chip>
             </strong>
               <v-spacer></v-spacer>
-           
 <div class="panel-optionsbuttonstop-responsive">
             <template>
               <slot name="optionsbuttonstop"></slot>
