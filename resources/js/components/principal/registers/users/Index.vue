@@ -12,9 +12,17 @@
                             ><v-icon left dark>cloud_download</v-icon
                             >Exportar</v-btn
                         >
-                        <v-btn v-if="$store.getters.getUser.roles == $store.state.user.roles.administrador" class="success mb-5" @click="descargarVeedores"
+                        <v-btn class="success mb-5" @click="descargarVeedores"
                             ><v-icon left dark>cloud_download</v-icon
                             >Exportar veedores</v-btn
+                        >
+                        <v-btn v-if="$store.getters.getUser.roles == $store.state.user.roles.administrador" class="success mb-5" @click="descargarSupervisores"
+                            ><v-icon left dark>cloud_download</v-icon
+                            >Exportar supervisores</v-btn
+                        >
+                        <v-btn v-if="$store.getters.getUser.roles == $store.state.user.roles.administrador" class="success mb-5" @click="descargarCoordinadores"
+                            ><v-icon left dark>cloud_download</v-icon
+                            >Exportar coordinadores</v-btn
                         >
                     </v-col>
                 </v-row>
@@ -550,10 +558,28 @@ export default {
                 });
         },
         descargar(){
-            window.open('/users-pdf','_blank');
+            if(this.$store.state.user.roles.administrador == this.$store.getters.getUser.roles){
+                window.open('/users-pdf','_blank');
+            }else{
+                window.open('/users-pdf/'+this.$store.getters.getUser.id,'_blank');
+            }
         },
         descargarVeedores(){
-            window.open('/veedores-pdf','_blank');
+            if(this.$store.state.user.roles.administrador == this.$store.getters.getUser.roles){
+                window.open('/veedores-pdf','_blank');
+            }else if(this.$store.state.user.roles.supervisor == this.$store.getters.getUser.roles){
+                window.open("/veedores-parroquias/"+this.$store.getters.getUser.id, "_blank");
+            }
+        },
+        descargarSupervisores(){
+            if(this.$store.state.user.roles.administrador == this.$store.getters.getUser.roles){
+                window.open("/veedores-supervisores", "_blank");
+            }
+        },
+        descargarCoordinadores(){
+            if(this.$store.state.user.roles.administrador == this.$store.getters.getUser.roles){
+                window.open("/veedores-coordinadores", "_blank");
+            }
         },
         selectAdjunto(adjunto) {
             this.$refs[adjunto][0].click();

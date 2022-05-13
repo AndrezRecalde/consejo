@@ -604,7 +604,10 @@ export default {
                 });
         },
         descargar() {
-            window.open("/veedores-pdf", "_blank");
+            //window.open("/veedores-pdf", "_blank");
+            if(this.$store.getters.getUser.roles == this.$store.state.user.roles.coordinador){
+                window.open("/veedores-coordinadores/"+this.$store.getters.getUser.id, "_blank");
+            } 
         },
         selectAdjunto(adjunto) {
             this.$refs[adjunto][0].click();

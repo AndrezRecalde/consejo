@@ -30,7 +30,8 @@ Route::group([
     Route::get('/registers/veedores', [VeedoresController::class, 'indexview']);
     Route::get('/veedor/detail/{veedor}', [VeedoresController::class, 'detail']);
     //PDF
-    Route::get('/users-pdf', [PDFController::class, 'getUsers']);
+    Route::get('/users-pdf/{user}', [PDFController::class, 'getUsers']);
+    Route::get('/users-pdf', [PDFController::class, 'getUsersAll']);
     Route::get('/veedores-pdf', [PDFController::class, 'getVeedores']);
 
     Route::get('/veedores-supervisores', [PDFController::class, 'getSupervisores']);

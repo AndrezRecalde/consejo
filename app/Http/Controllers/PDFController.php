@@ -10,7 +10,18 @@ use Illuminate\Support\Facades\DB;
 
 class PDFController extends Controller
 {
-    public function getUsers()
+    public function getUsers(User $user)
+    {
+        $users  =   User::with(['canton','parroquia','roles'])->where('user_id',$user->id)->get();
+        // ->join('parroquias as p', 'users.parroquia_id', '=', 'p.id')
+        // ->select('users.*', 'p.nombre_parroquia')
+        // ->get();
+
+        $pdf    =   PDF::loadView('pdf.users.all', ['users' => $users]);
+        // $pdf->setPaper('a4', 'landscape')->download('distrib-usuarios.pdf');
+        return  $pdf->setPaper('a4', 'landscape')->stream('distrib-usuarios.pdf');
+    }
+    public function getUsersAll(User $user)
     {
         $users  =   User::with(['canton','parroquia','roles'])->get();
         // ->join('parroquias as p', 'users.parroquia_id', '=', 'p.id')
@@ -21,7 +32,6 @@ class PDFController extends Controller
         // $pdf->setPaper('a4', 'landscape')->download('distrib-usuarios.pdf');
         return  $pdf->setPaper('a4', 'landscape')->stream('distrib-usuarios.pdf');
     }
-
     public function getVeedores()
     {
         //$veedores   =   Veedor::all();
