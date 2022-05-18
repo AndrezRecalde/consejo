@@ -34,7 +34,18 @@ const routes = [
     name: 'detalle veedor',
     path: '/veedor/detail/:id',
     props:{default: true},
-    component: require('../../../components/principal/veedor/detalle.vue').default
+    component: require('../../../components/principal/infopersona/veedor/Index.vue').default
+  },
+  {
+    name: 'detalle supervisor',
+    path: '/supervisor/detail/:id',
+    props:{default: true},
+    component: require('../../../components/principal/infopersona/supervisor/Index.vue').default
+  },{
+    name: 'detalle coordinador',
+    path: '/coordinador/detail/:id',
+    props:{default: true},
+    component: require('../../../components/principal/infopersona/coordinador/Index.vue').default
   },
 ];
 

@@ -13,16 +13,28 @@
                             >Exportar</v-btn
                         >
                         <v-btn class="success mb-5" @click="descargarVeedores"
-                            ><v-icon left dark>cloud_download</v-icon
-                            >Exportar veedores</v-btn
+                            ><v-icon left dark>cloud_download</v-icon>Exportar
+                            veedores</v-btn
                         >
-                        <v-btn v-if="$store.getters.getUser.roles == $store.state.user.roles.administrador" class="success mb-5" @click="descargarSupervisores"
-                            ><v-icon left dark>cloud_download</v-icon
-                            >Exportar supervisores</v-btn
+                        <v-btn
+                            v-if="
+                                $store.getters.getUser.roles ==
+                                $store.state.user.roles.administrador
+                            "
+                            class="success mb-5"
+                            @click="descargarSupervisores"
+                            ><v-icon left dark>cloud_download</v-icon>Exportar
+                            supervisores</v-btn
                         >
-                        <v-btn v-if="$store.getters.getUser.roles == $store.state.user.roles.administrador" class="success mb-5" @click="descargarCoordinadores"
-                            ><v-icon left dark>cloud_download</v-icon
-                            >Exportar coordinadores</v-btn
+                        <v-btn
+                            v-if="
+                                $store.getters.getUser.roles ==
+                                $store.state.user.roles.administrador
+                            "
+                            class="success mb-5"
+                            @click="descargarCoordinadores"
+                            ><v-icon left dark>cloud_download</v-icon>Exportar
+                            coordinadores</v-btn
                         >
                     </v-col>
                 </v-row>
@@ -70,6 +82,7 @@
                         <v-col cols="12" lg="6" md="6" class="pt-0">
                             <v-text-field
                                 :rules="validations.dni"
+                                maxlength="15"
                                 label="Dni"
                                 v-model="input.dni"
                                 required
@@ -131,13 +144,26 @@
                                 v-model="input.parroquia_id"
                                 required
                                 :items="itemsParroquia"
+                                @change="cargarRecintos"
                                 item-text="nombre_parroquia"
                                 item-value="id"
                                 label="Parroquia"
                                 dense
                             ></v-select>
                         </v-col>
-                        
+                        <v-col cols="12" lg="6" md="6" class="pt-0">
+                            <v-select :disabled="!compEnableRecinto"
+                                :rules="validations.recinto_id"
+                                outlined
+                                v-model="input.recinto_id"
+                                required
+                                :items="itemsRecintos"
+                                item-text="nombre_recinto"
+                                item-value="id"
+                                label="Recinto"
+                                dense
+                            ></v-select>
+                        </v-col>
                         <v-col cols="12" v-if="modificando">
                             <template v-for="(item, index) in files">
                                 <div :key="index">
@@ -232,6 +258,7 @@ export default {
             itemsCanton: [],
             itemsParroquia: [],
             itemsRoles: [],
+            itemsRecintos: [],
             input: {
                 dni: "",
                 first_name: "",
@@ -241,11 +268,13 @@ export default {
                 canton_id: "",
                 parroquia_id: "",
                 rol_id: "",
+                recinto_id: "",
             },
             urls: {
                 cargarAll: "/api/users-all",
                 cargarCantones: "/api/cantones",
                 cargarParroquias: "/api/parroquias",
+                cargarRecintos: "/api/recintos",
                 guardar: "/api/store/user",
                 cargar: "/api/show/user",
                 eliminar: "/api/delete/user",
@@ -299,6 +328,18 @@ export default {
                 },
             ],
         };
+    },computed:{
+        compEnableRecinto(){
+            this.validations.recinto_id = [];
+            let enableRecinto =this.itemsRoles.filter(item=> item.id == this.input.rol_id && item.name == this.$store.state.user.roles.coordinador ).length>0;
+            if(enableRecinto){
+                this.validations.recinto_id.push(
+                    (v) => (v != null && v != "") || "El campo es obligatorio"
+                );
+            }
+
+            return enableRecinto;
+        }
     },
     methods: {
         cargarValidaciones() {
@@ -375,6 +416,20 @@ export default {
                 })
                 .catch((errors) => {});
         },
+        cargarRecintos() {
+            let valores = {
+                parroquia_id: this.input.parroquia_id,
+            };
+            axios
+                .post(this.urls.cargarRecintos, valores)
+                .then((response) => {
+                    var data = response.data;
+                    if (data.status == "success") {
+                        this.itemsRecintos = data.recintos;
+                    }
+                })
+                .catch((errors) => {});
+        },
         nuevo() {
             this.resetValues();
             this.$store.commit("openDialogSimple", {
@@ -439,25 +494,24 @@ export default {
                         icon: data.status,
                         title: data.message,
                     });
-                    if(data.status=="success"){
+                    if (data.status == "success") {
                         this.dialogClose("dialogSimple");
                     }
                 })
                 .catch((errors) => {
-                    if(errors.response.data){
+                    if (errors.response.data) {
                         let arr = Object.values(errors.response.data);
                         swal__.fire(
                             "ERROR!",
                             "ha ocurrido un error: " + arr[0],
                             "error"
                         );
-                    }else{
+                    } else {
                         swal__.fire(
                             "ERROR!",
                             "ha ocurrido un error: " + errors,
                             "error"
                         );
-
                     }
                 })
                 .finally(() => {
@@ -492,19 +546,19 @@ export default {
                         icon: data.status,
                         title: data.message,
                     });
-                    if(data.status=="success"){
+                    if (data.status == "success") {
                         this.dialogClose("dialogSimple");
                     }
                 })
                 .catch((errors) => {
-                    if(errors.response.data){
+                    if (errors.response.data) {
                         let arr = Object.values(errors.response.data);
                         swal__.fire(
                             "ERROR!",
                             "ha ocurrido un error: " + arr[0],
                             "error"
                         );
-                    }else{
+                    } else {
                         swal__.fire(
                             "ERROR!",
                             "ha ocurrido un error: " + errors,
@@ -557,27 +611,48 @@ export default {
                     }
                 });
         },
-        descargar(){
-            if(this.$store.state.user.roles.administrador == this.$store.getters.getUser.roles){
-                window.open('/users-pdf','_blank');
-            }else{
-                window.open('/users-pdf/'+this.$store.getters.getUser.id,'_blank');
+        descargar() {
+            if (
+                this.$store.state.user.roles.administrador ==
+                this.$store.getters.getUser.roles
+            ) {
+                window.open("/users-pdf", "_blank");
+            } else {
+                window.open(
+                    "/users-pdf/" + this.$store.getters.getUser.id,
+                    "_blank"
+                );
             }
         },
-        descargarVeedores(){
-            if(this.$store.state.user.roles.administrador == this.$store.getters.getUser.roles){
-                window.open('/veedores-pdf','_blank');
-            }else if(this.$store.state.user.roles.supervisor == this.$store.getters.getUser.roles){
-                window.open("/veedores-parroquias/"+this.$store.getters.getUser.id, "_blank");
+        descargarVeedores() {
+            if (
+                this.$store.state.user.roles.administrador ==
+                this.$store.getters.getUser.roles
+            ) {
+                window.open("/veedores-pdf", "_blank");
+            } else if (
+                this.$store.state.user.roles.supervisor ==
+                this.$store.getters.getUser.roles
+            ) {
+                window.open(
+                    "/veedores-parroquias/" + this.$store.getters.getUser.id,
+                    "_blank"
+                );
             }
         },
-        descargarSupervisores(){
-            if(this.$store.state.user.roles.administrador == this.$store.getters.getUser.roles){
+        descargarSupervisores() {
+            if (
+                this.$store.state.user.roles.administrador ==
+                this.$store.getters.getUser.roles
+            ) {
                 window.open("/veedores-supervisores", "_blank");
             }
         },
-        descargarCoordinadores(){
-            if(this.$store.state.user.roles.administrador == this.$store.getters.getUser.roles){
+        descargarCoordinadores() {
+            if (
+                this.$store.state.user.roles.administrador ==
+                this.$store.getters.getUser.roles
+            ) {
                 window.open("/veedores-coordinadores", "_blank");
             }
         },

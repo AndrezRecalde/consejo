@@ -60,6 +60,7 @@
                                 :rules="validations.dni"
                                 label="Dni"
                                 v-model="input.dni"
+                                maxlength="15"
                                 required
                                 outlined
                                 dense
@@ -109,7 +110,7 @@
                                 :items="itemsRecintos"
                                 item-text="nombre_recinto"
                                 item-value="id"
-                                label="Recinto"
+                                label="Lugar de trabajo"
                                 dense
                             ></v-select>
                         </v-col>
@@ -122,7 +123,7 @@
                                 :items="itemsRecintosAll"
                                 item-text="nombre_recinto"
                                 item-value="id"
-                                label="Lugar de trabajo"
+                                label="Recinto"
                                 dense
                             ></v-select>
                         </v-col>
@@ -324,12 +325,12 @@ export default {
                         ? this.$store.state.validEmail(v)
                         : true) || "El email es inválido"
             );
-            this.files.some((item, index) => {
-                this.validations["adjunto_nombre" + index] = [];
-                this.validations["adjunto_nombre" + index].push(
-                    (v) => (v != null && v != "") || "El campo es obligatorio"
-                );
-            });
+            // this.files.some((item, index) => {
+            //     this.validations["adjunto_nombre" + index] = [];
+            //     this.validations["adjunto_nombre" + index].push(
+            //         (v) => (v != null && v != "") || "El campo es obligatorio"
+            //     );
+            // });
         },
         listar_menu_tabla(item) {
             return [

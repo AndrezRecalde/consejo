@@ -7,6 +7,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Perfil\PerfilController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VeedoresController;
+use App\Http\Controllers\SupervisorController;
+use App\Http\Controllers\CoordinadorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +31,8 @@ Route::group([
     Route::get('/registers/users',    [UsersController::class, 'indexview']);                         //vista de usuarios
     Route::get('/registers/veedores', [VeedoresController::class, 'indexview']);
     Route::get('/veedor/detail/{veedor}', [VeedoresController::class, 'detail']);
+    Route::get('/coordinador/detail/{coordinador}', [CoordinadorController::class, 'detail']);
+    Route::get('/supervisor/detail/{supervisor}', [SupervisorController::class, 'detail']);
     //PDF
     Route::get('/users-pdf/{user}', [PDFController::class, 'getUsers']);
     Route::get('/users-pdf', [PDFController::class, 'getUsersAll']);

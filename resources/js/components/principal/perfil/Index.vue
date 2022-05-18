@@ -13,7 +13,7 @@
                                 v-if="user.avatar"
                                 width="100"
                                 style="border-radius: 10px"
-                                :src="'storage' + user.avatar"
+                                :src="'/storage' + user.avatar"
                                 alt="User avatar"
                             ></v-img>
                             <v-img
@@ -42,7 +42,11 @@
                                     <a
                                         href="#"
                                         class="text-gray-900 text-hover-primary fs-2 fw-bolder me-1"
-                                        >{{ user.first_name + " " + user.last_name }}</a
+                                        >{{
+                                            (user.first_name || '') +
+                                            " " +
+                                            (user.last_name || '')
+                                        }}</a
                                     >
                                     <a href="#">
                                         <!--begin::Svg Icon | path: icons/duotune/general/gen026.svg-->
@@ -194,22 +198,45 @@
                         </div>
                         <!--end::Title-->
                         <!--begin::Stats-->
-                        <div v-if="$store.getters.getUser.roles == $store.state.user.roles.coordinador || $store.getters.getUser.roles == $store.state.user.roles.supervisor"
+                        <div
+                            v-if="
+                                $store.getters.getUser.roles ==
+                                    $store.state.user.roles.coordinador ||
+                                $store.getters.getUser.roles ==
+                                    $store.state.user.roles.supervisor
+                            "
                             class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3"
                         >
                             <div
                                 class="d-flex justify-content-between w-100 mt-auto mb-2"
                             >
                                 <span class="fw-bold fs-6 text-gray-400"
-                                    >Profile Compleation</span
+                                    >Profile Completation</span
                                 >
-                                <span class="fw-bolder fs-6">{{Math.round(((funcionarios.length / user.total_juntas) * 100 )) || 0}}% ({{funcionarios.length}}/{{user.total_juntas}})</span>
+                                <span class="fw-bolder fs-6"
+                                    >{{
+                                        Math.round(
+                                            (funcionarios.length /
+                                                user.total_juntas) *
+                                                100
+                                        ) || 0
+                                    }}% ({{ funcionarios.length }}/{{
+                                        user.total_juntas
+                                    }})</span
+                                >
                             </div>
                             <div class="h-5px mx-3 w-100 bg-light mb-3">
                                 <div
                                     class="bg-success rounded h-5px"
                                     role="progressbar"
-                                    :style="{'width': Math.round(((funcionarios.length / user.total_juntas) * 100 ) || 0)+'%'}"
+                                    :style="{
+                                        width:
+                                            Math.round(
+                                                (funcionarios.length /
+                                                    user.total_juntas) *
+                                                    100 || 0
+                                            ) + '%',
+                                    }"
                                     aria-valuemin="0"
                                     aria-valuemax="100"
                                 ></div>
@@ -336,7 +363,7 @@
                                 <v-avatar size="80" class="ma-auto">
                                     <v-img
                                         v-if="_user.avatar"
-                                        :src="'storage' + _user.avatar"
+                                        :src="'/storage' + _user.avatar"
                                         alt="User avatar"
                                     ></v-img>
                                     <v-img
@@ -347,7 +374,10 @@
                                         alt="image"
                                     ></v-img>
                                 </v-avatar>
-                                <strong>{{ _user.nombres_completos }}</strong>
+                                <strong
+                                    >{{ _user.nombres_completos
+                                    }}</strong
+                                >
                                 <div
                                     v-if="_user.nombre_parroquia"
                                     class="fw-bold text-gray-400"
@@ -359,6 +389,57 @@
                                     class="fw-bold text-gray-400"
                                 >
                                     {{ _user.nombre_recinto }}
+                                </div>
+                                <div
+                                    v-if="
+                                        $store.getters.getUser.roles ==
+                                        $store.state.user.roles.administrador
+                                    "
+                                    class="fw-bold text-gray-400"
+                                >
+                                    <div
+                                        class="d-flex align-items-center w-200px w-sm-200px flex-column mt-3"
+                                    >
+                                        <div
+                                            class="d-flex justify-content-between w-100 mt-auto mb-2"
+                                        >
+                                            <span
+                                                class="fw-bold fs-6 text-gray-400"
+                                                >Completation</span
+                                            >
+                                            <span class="fw-bolder fs-6"
+                                                >{{
+                                                    Math.round(
+                                                        (_user.total_veedores /
+                                                            user.total) *
+                                                            100
+                                                    ) || 0
+                                                }}% ({{
+                                                    _user.total_veedores
+                                                }}/{{
+                                                    _user.total
+                                                }})</span
+                                            >
+                                        </div>
+                                        <div
+                                            class="h-5px mx-3 w-100 bg-light mb-3"
+                                        >
+                                            <div
+                                                class="bg-success rounded h-5px"
+                                                role="progressbar"
+                                                :style="{
+                                                    width:
+                                                        Math.round(
+                                                            (_user.total_veedores /
+                                                                _user.total) *
+                                                                100 || 0
+                                                        ) + '%',
+                                                }"
+                                                aria-valuemin="0"
+                                                aria-valuemax="100"
+                                            ></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -413,6 +494,16 @@ export default {
                 this.$store.state.user.roles.coordinador
             ) {
                 window.open("/veedor/detail/" + item.id, "_blank");
+            } else if (
+                this.$store.getters.getUser.roles ==
+                this.$store.state.user.roles.administrador
+            ) {
+                window.open("/supervisor/detail/" + item.id, "_blank");
+            } else if (
+                this.$store.getters.getUser.roles ==
+                this.$store.state.user.roles.supervisor
+            ) {
+                window.open("/coordinador/detail/" + item.id, "_blank");
             }
         },
         cargar() {

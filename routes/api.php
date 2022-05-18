@@ -5,6 +5,8 @@ use App\Http\Controllers\RolesController;
 use App\Http\Controllers\StatesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VeedoresController;
+use App\Http\Controllers\SupervisorController;
+use App\Http\Controllers\CoordinadorController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +42,12 @@ Route::group([
     Route::get('parroquias', [StatesController::class, 'loadParroquiasAll']);               //Devuelve todas las parroquias con request
     Route::post('recintos', [StatesController::class, 'loadRecintos']);                  //Devuelve todos los recintos con un request
     Route::get('recintos', [StatesController::class, 'loadRecintoAll']);                //Devuelve todos los recintos sin request
-
+    Route::group(['middleware' => ['role:Administrador,api']], function () {
+        Route::post('/show/supervisor', [SupervisorController::class, 'show']);
+    });
+    Route::group(['middleware' => ['role:Supervisor,api']], function () {
+        Route::post('/show/coordinador', [CoordinadorController::class, 'show']);
+    });
     Route::group(['middleware' => ['role:Administrador|Supervisor,api']], function () {
         //UsersController
         Route::post('/users',    [UsersController::class, 'index']);                         //Cargar todos los usuarios con parametro

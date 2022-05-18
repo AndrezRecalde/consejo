@@ -59,18 +59,18 @@
                                 <!--begin::Label-->
                                 <label
                                     class="form-label fs-6 fw-bolder text-dark"
-                                    >Email</label
+                                    >Dni</label
                                 >
                                 <!--end::Label-->
                                 <!--begin::Input-->
                                 <v-text-field
-                                    v-model="valor.email"
-                                    :rules="validations.email"
-                                    type="email"
+                                    v-model="valor.dni"
+                                    :rules="validations.dni"
                                     outlined
-                                    append-icon="alternate_email"
+                                    append-icon="person"
                                     required
                                     dense
+                                    maxlength="15"
                                 ></v-text-field>
                                 <!--end::Input-->
                             </div>
@@ -154,12 +154,12 @@ export default {
         return {
             valid: false,
             loading: false,
-            valor: { email: "", password: "" },
+            valor: { dni: "", password: "" },
             urls: {
                 login: "/login",
             },
             validations: {
-                email: [
+                dni: [
                     (v) => (v != null && v != "") || "El campo es obligatorio",
                 ],
                 password: [
@@ -172,7 +172,7 @@ export default {
         };
     },
     created() {
-        this.cargarValidaciones();
+        //this.cargarValidaciones();
     },
     mounted() {
         self = this;
@@ -181,7 +181,7 @@ export default {
     },
     methods: {
         cargarValidaciones() {
-            this.validations.email.push(
+            this.validations.dni.push(
                 (v) =>
                     (v != null && v != ""
                         ? this.$store.state.validEmail(v)
@@ -192,7 +192,7 @@ export default {
             if (!this.$refs.form.validate()) return;
             try {
                 let valores = {
-                    email: this.valor.email,
+                    dni: this.valor.dni,
                     password: this.valor.password,
                 };
                 this.loading = true;
@@ -203,10 +203,10 @@ export default {
                         let data = response.data;
                         this.loading = false;
 
-                        if (data.error) {
+                        if (data.status=="error") {
                             toast__.fire({
                                 icon: "error",
-                                title: data.error,
+                                title: data.message,
                             });
                             return;
                         }
@@ -228,9 +228,9 @@ export default {
                             console.log(error.response.status);
                             console.log(error.response.headers);
                             swal__.fire(
-                                "Hubo un error",
-                                error.response.data.error,
-                                "error"
+                                "",
+                                error.response.data.message,
+                                "warning"
                             );
                         }
                     })
@@ -242,7 +242,7 @@ export default {
                 swal__.fire(
                     "ERROR!",
                     errors.response.data.error || errors.message,
-                    "error"
+                    "warning"
                 );
             }
         },

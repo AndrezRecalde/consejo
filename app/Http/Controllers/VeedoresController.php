@@ -73,8 +73,8 @@ class VeedoresController extends Controller
             'parroquia_id'  =>  'required',   //Parroquia donde trabaja
             'recinto_id'    =>  'required',  //Recinto de donde es originario
             'recinto__id'   =>  'required',  //Recinto en donde trabaja
-            'imagen_frontal'    =>  'required|mimes:png,jpg,jpeg',
-            'imagen_reverso'    =>  'required|mimes:png,jpg,jpeg'
+            // 'imagen_frontal'    =>  'required|mimes:png,jpg,jpeg',
+            // 'imagen_reverso'    =>  'required|mimes:png,jpg,jpeg'
         ];
 
         try {
@@ -88,43 +88,41 @@ class VeedoresController extends Controller
             }
 
             $veedor = Veedor::create($request->all());
-
-            $veedor->imagen_frontal = $request->file('imagen_frontal');
-            $veedor->imagen_reverso = $request->file('imagen_reverso');
-
-            $filename_f = $veedor->imagen_frontal->getClientOriginalName();
-            $filename_r = $veedor->imagen_reverso->getClientOriginalName();
-
-            //$save_path = storage_path('app/public') . '/veedores/dni/' . $veedor->dni . '/upload/imagenes/';
-            $save_path =  '/veedores/dni/' . $veedor->dni . '/uploads/imagenes/';
-            // $public_path_f = '/veedores/dni/' . $veedor->dni . '/upload/imagenes/' . $filename_f;
-            // $public_path_r = '/veedores/dni/' . $veedor->dni . '/upload/imagenes/' . $filename_r;
-            $public_path_f = $save_path . $filename_f;
-            $public_path_r = $save_path . $filename_r;
-
-            // File::makeDirectory($save_path, $mode = 0755, true, true);
-            // Image::make($veedor->imagen_frontal)->save($save_path . $filename_f);
-            // Image::make($veedor->imagen_reverso)->save($save_path . $filename_r);
-            $path = Storage::putFileAs(
-                'public'.$save_path,
-                $veedor->imagen_frontal,
-                $filename_f
-            );
-            if (!$path) {
-                \DB::rollback();
-                return response()->json(array("status" => "error",'message'=>'Hubo un error al actualizar'));
+            if($request->file('imagen_frontal')){
+                $veedor->imagen_frontal = $request->file('imagen_frontal');
+                $filename_f = $veedor->imagen_frontal->getClientOriginalName();
+                //$save_path = storage_path('app/public') . '/veedores/dni/' . $veedor->dni . '/upload/imagenes/';
+                $save_path =  '/veedores/dni/' . $veedor->dni . '/uploads/imagenes/';
+                // $public_path_f = '/veedores/dni/' . $veedor->dni . '/upload/imagenes/' . $filename_f;
+                // $public_path_r = '/veedores/dni/' . $veedor->dni . '/upload/imagenes/' . $filename_r;
+                $public_path_f = $save_path . $filename_f;
+                $path = Storage::putFileAs(
+                    'public'.$save_path,
+                    $veedor->imagen_frontal,
+                    $filename_f
+                );
+                if (!$path) {
+                    \DB::rollback();
+                    return response()->json(array("status" => "error",'message'=>'Hubo un error al actualizar'));
+                }
+                $veedor->imagen_frontal = $public_path_f;
             }
-            $path = Storage::putFileAs(
-                'public/'.$save_path,
-                $veedor->imagen_reverso,
-                $filename_r
-            );
-            if (!$path) {
-                \DB::rollback();
-                return response()->json(array("status" => "error",'message'=>'Hubo un error al actualizar'));
+            if($request->file('imagen_reverso')){
+                $veedor->imagen_reverso = $request->file('imagen_reverso');
+                $filename_r = $veedor->imagen_reverso->getClientOriginalName();
+                $save_path =  '/veedores/dni/' . $veedor->dni . '/uploads/imagenes/';
+                $public_path_r = $save_path . $filename_r;
+                $path = Storage::putFileAs(
+                    'public/'.$save_path,
+                    $veedor->imagen_reverso,
+                    $filename_r
+                );
+                if (!$path) {
+                    \DB::rollback();
+                    return response()->json(array("status" => "error",'message'=>'Hubo un error al actualizar'));
+                }
+                $veedor->imagen_reverso = $public_path_r;
             }
-            $veedor->imagen_frontal = $public_path_f;
-            $veedor->imagen_reverso = $public_path_r;
 
             $veedor->save();
             return ['status' => 'success','message'=>'veedor registrado'];
