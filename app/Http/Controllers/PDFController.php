@@ -38,8 +38,11 @@ class PDFController extends Controller
         $veedores = DB::table('veedores as v')
         ->join('users', 'users.id', '=', 'v.user_id')
         ->join('parroquias as p', 'v.parroquia_id', '=', 'p.id')
-        ->join('recintos as r', 'v.recinto_id', '=', 'r.id')
-        ->select('v.*', 'users.first_name as user' ,'p.nombre_parroquia', 'r.nombre_recinto')
+        ->join('cantones as c', 'c.id', 'p.canton_id')
+        ->join('recintos as r', 'v.recinto_id', 'r.id')
+        ->join('recintos as re', 'v.recinto__id', 're.id')
+        ->select(DB::raw('v.dni, CONCAT(v.first_name, " ", v.last_name) as nombres, c.nombre_canton as canton,
+                        r.nombre_recinto as origen, re.nombre_recinto as trabajo, v.phone, v.email'))
         ->get();
         $pdf        =   PDF::loadView('pdf.veedores.all', ['veedores' => $veedores]);
         return $pdf->setPaper('a4', 'landscape')->stream('distrib-veedores.pdf');
@@ -51,7 +54,7 @@ class PDFController extends Controller
         $veedores = DB::table('veedores as v')
         ->select(DB::raw('v.dni, CONCAT(v.first_name, v.last_name) as nombres, c.nombre_canton as canton,
                         r.nombre_recinto as origen, re.nombre_recinto as trabajo, v.phone, v.email,
-                        CONCAT(u.first_name, u.last_name) as responsable'))
+                        CONCAT(u.first_name, " ", u.last_name) as responsable'))
         ->join('users as u', 'v.user_id', 'u.id')
         ->join('parroquias as p', 'v.parroquia_id', 'p.id')
         ->join('cantones as c', 'c.id', 'p.canton_id')
