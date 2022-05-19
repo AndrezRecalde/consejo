@@ -109,6 +109,7 @@ class UsersController extends Controller
                 $u->canton_id = $_user->canton->id;
                 $u->parroquia_id = $_user->parroquia->id;
                 $u->rol_id = $_user->roles[0]->id;
+                $u->recinto_id = $_user->recinto->id;
                 if($u->roles === 'Administrador'){
                     /* Devuelve una lista de supervisores si el role del usuario es ADMINISTRADOR */
                     $supervisores = DB::select('CALL sp_view_supervisores');

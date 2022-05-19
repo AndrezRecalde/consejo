@@ -30,6 +30,7 @@ class User extends Authenticatable
         'user_id',
         'canton_id',
         'parroquia_id',
+        'recinto_id',
     ];
 
     /**
@@ -53,6 +54,10 @@ class User extends Authenticatable
     public function canton()
 	{
 		return $this->belongsTo(Canton::class,'canton_id','id');
+	}
+    public function recinto()
+	{
+		return $this->belongsTo(Recinto::class,'recinto_id','id');
 	}
 	public function parroquia()
 	{

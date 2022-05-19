@@ -39,9 +39,9 @@ class UserUpdateRequest extends FormRequest
             /* 'user_id'       =>  'required', */
             'canton_id'     =>  'required',
             'parroquia_id'  =>  'required',
-            'roles'         =>  'required'
+            'roles'         =>  'required',
+            'recinto_id'    =>  [ \DB::table('roles')->find($this->roles)->name == 'Coordinador' ? 'required' : 'nullable']
         ];
-
         if($this->filled('password'))
         {
             $rules['password'] = ['confirmed', 'min:6'];

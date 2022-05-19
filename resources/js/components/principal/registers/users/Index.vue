@@ -458,6 +458,7 @@ export default {
                             .pop();
                     }
                     await this.cargarParroquias();
+                    await this.cargarRecintos();
 
                     this.$store.commit("openDialogSimple", {
                         openDialog: true,
@@ -484,6 +485,9 @@ export default {
             formData.append("dni", this.input.dni);
             formData.append("parroquia_id", this.input.parroquia_id);
             formData.append("roles", this.input.rol_id);
+            if(this.compEnableRecinto){
+                formData.append("recinto_id", this.input.recinto_id);
+            }
 
             this.loading = true;
             axios
@@ -536,6 +540,9 @@ export default {
             formData.append("dni", this.input.dni);
             formData.append("parroquia_id", this.input.parroquia_id);
             formData.append("roles", this.input.rol_id);
+             if(this.compEnableRecinto){
+                formData.append("recinto_id", this.input.recinto_id);
+            }
 
             this.loading = true;
             axios
